@@ -15,7 +15,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../lib/axios";
+import axiosInstance from "../../lib/axios";
 import { toast } from "sonner";
 
 const CustomersTable = () => {

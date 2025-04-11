@@ -15,7 +15,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../lib/axios";
+import axiosInstance from "../../lib/axios";
 import { toast } from "sonner";
 
 const TrxTable = () => {
@@ -99,7 +99,8 @@ const TrxTable = () => {
       setCustomers(customersResponse.data.data);
       setProducts(productsResponse.data.data);
     } catch (error) {
-      toast.error("Error fetching customers or products:", error);
+      toast.error("Error fetching customers or products");
+      console.error(error);
     }
   };
 
