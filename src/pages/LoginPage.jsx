@@ -34,7 +34,8 @@ const LoginPage = () => {
         // Redirect ke dashboard setelah login berhasil
         navigate("/dashboard");
       } else {
-        setError("Token did not found in response.");
+        setError("Token did not found in response.", error);
+        console.error("Token did not found in response.");
       }
     } catch (err) {
       console.error("Login failed:", err);

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import TableCustomer from "../components/dashboard/TableCustomer";
@@ -44,9 +43,6 @@ const Dashboard = () => {
                   collapsed ? "justify-center" : "justify-center"
                 }`}
               >
-                {/*<span className="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-              W
-            </span>*/}
                 {!collapsed && (
                   <span className="flex justify-center items-center">
                     <img
@@ -217,7 +213,6 @@ const Dashboard = () => {
               className="btn btn-sm bg-red-400 hover:bg-red-300 rounded-lg text-white font-light"
               type="button"
               onClick={() => document.getElementById("logout_modal").close()}
-              // Menutup modal tanpa menghapus
             >
               Cancel
             </button>
