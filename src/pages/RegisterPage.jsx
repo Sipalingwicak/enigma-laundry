@@ -6,7 +6,6 @@ import { useState } from "react";
 import axiosInstance from "../lib/axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import z from "zod";
 
 const RegisterPage = () => {
   //state handle register
