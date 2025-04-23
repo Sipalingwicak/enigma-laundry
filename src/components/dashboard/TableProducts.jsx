@@ -17,10 +17,17 @@ import {
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios";
 import { toast } from "sonner";
+import { usePaginate } from "../../hooks/usePaginate";
+import CustomPagination from "../shared/CustomPagination";
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const rowsPerPage = 4;
+  const { page, setPage, totalPages, paginatedData } = usePaginate(
+    products,
+    rowsPerPage
+  );
 
   //menampilkan data dari API ketika halaman pertama kali dimuat
   useEffect(() => {
@@ -36,18 +43,6 @@ const ProductsTable = () => {
 
     fetchProducts();
   }, []);
-
-  //pagination state menampilkan 4 Data dalam 1 tabel
-  const [page, setPage] = React.useState(1);
-  const rowsPerPage = 4;
-  const pages = Math.max(1, Math.ceil(products.length / rowsPerPage));
-
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return products.slice(start, end);
-  }, [page, products]);
 
   //DETAIL MODAL DISINI
   //Buka modal Detail Product
@@ -199,18 +194,11 @@ const ProductsTable = () => {
             isStriped
             className="[&_tr:nth-child(even)]:bg-teal-50 [&_tr:nth-child(odd)]:bg-white"
             bottomContent={
-              <div className="flex w-full justify-center">
-                <Pagination
-                  isCompact
-                  showControls
-                  showShadow
-                  color="success"
-                  page={page}
-                  total={pages}
-                  onChange={(page) => setPage(page)}
-                  size="sm"
-                />
-              </div>
+              <CustomPagination
+                page={page}
+                totalPages={totalPages}
+                onChange={setPage}
+              />
             }
           >
             <TableHeader>
@@ -224,11 +212,11 @@ const ProductsTable = () => {
                 Action
               </TableColumn>
             </TableHeader>
-            <TableBody items={items}>
-              {items.map((item, index) => (
+            <TableBody items={paginatedData}>
+              {paginatedData.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-content1-foreground">
-                    {index + 1 + (page - 1) * rowsPerPage}
+                    {index + 1 + (page - 1) * totalPages}
                   </TableCell>
                   <TableCell>{item.name}</TableCell>
 
@@ -259,7 +247,7 @@ const ProductsTable = () => {
                 </TableRow>
               ))}
 
-              {Array.from({ length: rowsPerPage - items.length }).map(
+              {Array.from({ length: rowsPerPage - paginatedData.length }).map(
                 (_, idx) => (
                   <TableRow
                     key={`empty-${idx}`}

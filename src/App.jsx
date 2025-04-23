@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate } from "react-router";
-import Loading from "./components/Loading";
+import Loading from "./components/layout/Loading";
 import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 import { setNavigator } from "./utils/authRedirect";

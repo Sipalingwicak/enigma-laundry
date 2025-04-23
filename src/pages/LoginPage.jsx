@@ -1,6 +1,6 @@
 import React from "react";
-import Background from "../components/Background";
-import Header from "../components/Header";
+import Background from "../components/layout/Background";
+import Header from "../components/layout/Header";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axios";

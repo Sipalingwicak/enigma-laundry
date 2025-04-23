@@ -12,15 +12,21 @@ import {
   CardFooter,
   CardHeader,
   Divider,
-  Pagination,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../lib/axios";
 import { toast } from "sonner";
+import { usePaginate } from "../../hooks/usePaginate";
+import axiosInstance from "../../lib/axios";
+import CustomPagination from "../shared/CustomPagination";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); //edit dan detail
+  const rowsPerPage = 4;
+  const { page, setPage, totalPages, paginatedData } = usePaginate(
+    customers,
+    rowsPerPage
+  );
 
   //menampilkan data dari API ketika halaman pertama kali dimuat
   useEffect(() => {
@@ -35,18 +41,6 @@ const CustomersTable = () => {
     };
     fetchCustomers();
   }, []);
-
-  //pagination state menampilkan 4 Data dalam 1 tabel
-  const [page, setPage] = React.useState(1);
-  const rowsPerPage = 4;
-  const pages = Math.max(1, Math.ceil(customers.length / rowsPerPage));
-
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return customers.slice(start, end);
-  }, [page, customers]);
 
   //DETAIL MODAL DISINI
   //Buka modal Detail customer
@@ -173,7 +167,7 @@ const CustomersTable = () => {
       {/* Customer List's */}
       <Card className="w-full max-w-4xl mx-auto mt-10">
         <CardHeader className="relative">
-          <p className="text-left font-bold ml-3">Customers list</p>
+          <p className="text-left font-bold ml-3 font-">Customers list</p>
           <Button
             onPress={() => document.getElementById("add_modal").showModal()}
             size="sm"
@@ -191,18 +185,11 @@ const CustomersTable = () => {
             className="[&_tr:nth-child(even)]:bg-teal-50 [&_tr:nth-child(odd)]:bg-white"
             // Pagination di bawah table (bottomContent)
             bottomContent={
-              <div className="flex w-full justify-center">
-                <Pagination
-                  isCompact
-                  showControls
-                  showShadow
-                  color="success"
-                  page={page}
-                  total={pages}
-                  onChange={(page) => setPage(page)}
-                  size="sm"
-                />
-              </div>
+              <CustomPagination
+                page={page}
+                totalPages={totalPages}
+                onChange={setPage}
+              />
             }
           >
             <TableHeader>
@@ -214,11 +201,11 @@ const CustomersTable = () => {
                 Action
               </TableColumn>
             </TableHeader>
-            <TableBody items={items}>
-              {items.map((item, index) => (
+            <TableBody items={paginatedData}>
+              {paginatedData.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-center">
-                    {index + 1 + (page - 1) * rowsPerPage}
+                    {index + 1 + (page - 1) * totalPages}
                   </TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell className="flex justify-end gap-2">
@@ -246,7 +233,7 @@ const CustomersTable = () => {
               ))}
 
               {/* Bikin placeholder rows kalau isi table kurang dari 4 rows */}
-              {Array.from({ length: rowsPerPage - items.length }).map(
+              {Array.from({ length: rowsPerPage - paginatedData.length }).map(
                 (_, idx) => (
                   <TableRow
                     key={`empty-${idx}`}

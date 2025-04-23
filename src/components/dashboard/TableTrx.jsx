@@ -17,6 +17,8 @@ import {
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios";
 import { toast } from "sonner";
+import { usePaginate } from "../../hooks/usePaginate";
+import CustomPagination from "../shared/CustomPagination";
 
 const TrxTable = () => {
   const [transactions, setTransactions] = useState([]);
@@ -46,24 +48,15 @@ const TrxTable = () => {
     }, {})
   );
 
+  const rowsPerPage = 4;
+  const { page, setPage, totalPages, paginatedData } = usePaginate(
+    groupedTransactions,
+    rowsPerPage
+  );
+
   useEffect(() => {
     fetchTransactions();
   }, []);
-
-  //pagination state menampilkan 4 Data dalam 1 tabel
-  const [page, setPage] = React.useState(1);
-  const rowsPerPage = 4;
-  const pages = Math.max(
-    1,
-    Math.ceil(groupedTransactions.length / rowsPerPage)
-  );
-
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return groupedTransactions.slice(start, end);
-  }, [page, groupedTransactions]);
 
   //DETAIL MODAL DISINI
   //Buka modal Detail Product
@@ -192,18 +185,11 @@ const TrxTable = () => {
             isStriped
             className="[&_tr:nth-child(even)]:bg-teal-50 [&_tr:nth-child(odd)]:bg-white"
             bottomContent={
-              <div className="flex w-full justify-center">
-                <Pagination
-                  isCompact
-                  showControls
-                  showShadow
-                  color="success"
-                  page={page}
-                  total={pages}
-                  onChange={(page) => setPage(page)}
-                  size="sm"
-                />
-              </div>
+              <CustomPagination
+                page={page}
+                totalPages={totalPages}
+                onChange={setPage}
+              />
             }
           >
             <TableHeader>
@@ -212,8 +198,8 @@ const TrxTable = () => {
               <TableColumn>Transaction</TableColumn>
               <TableColumn className="text-center">Action</TableColumn>
             </TableHeader>
-            <TableBody items={items}>
-              {items.map((group) => {
+            <TableBody items={paginatedData}>
+              {paginatedData.map((group) => {
                 const trxCount = group.transactions.length;
 
                 return (
@@ -236,7 +222,7 @@ const TrxTable = () => {
                 );
               })}
 
-              {Array.from({ length: rowsPerPage - items.length }).map(
+              {Array.from({ length: rowsPerPage - paginatedData.length }).map(
                 (_, idx) => (
                   <TableRow
                     key={`empty-${idx}`}
